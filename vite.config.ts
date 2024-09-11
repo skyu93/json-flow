@@ -7,5 +7,10 @@ export default defineConfig({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
   },
   plugins: [vue()],
+  resolve: {
+    alias: {
+      'monaco-editor': 'monaco-editor/esm/vs/editor/editor.api',
+    },
+  },
 })
 
