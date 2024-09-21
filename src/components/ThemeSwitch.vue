@@ -1,49 +1,41 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch } from "vue";
 
 const props = defineProps({
   modelValue: { type: Boolean },
 });
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(["update:modelValue"]);
 
-const toggle = computed(() => props.modelValue)
-const iconRef = ref<HTMLElement | null>()
-const moveToLeftKeyframes = [
-  { transform:  'translateX(0px)' },
-  { transform: 'translateX(17px)' }
-]
-const moveToRightKeyframes = [
-  { transform:  'translateX(17px)' },
-  { transform: 'translateX(0px)' }
-]
-
+const toggle = computed(() => props.modelValue);
+const iconRef = ref<HTMLElement | null>();
+const moveToLeftKeyframes = [{ transform: "translateX(0px)" }, { transform: "translateX(17px)" }];
+const moveToRightKeyframes = [{ transform: "translateX(17px)" }, { transform: "translateX(0px)" }];
 
 const playToggleAnimation = () => {
-  if(!iconRef.value) return
-  const keyframes = toggle.value ? moveToLeftKeyframes : moveToRightKeyframes
+  if (!iconRef.value) return;
+  const keyframes = toggle.value ? moveToLeftKeyframes : moveToRightKeyframes;
   const options: KeyframeAnimationOptions = {
     duration: 150,
     iterations: 1,
-    easing: 'linear',
-    fill: 'forwards'
-  }
-  iconRef.value.animate(keyframes, options)
-}
+    easing: "linear",
+    fill: "forwards",
+  };
+  iconRef.value.animate(keyframes, options);
+};
 const onToggle = () => {
-  emits('update:modelValue', !toggle.value)
-}
+  emits("update:modelValue", !toggle.value);
+};
 
-watch(() => toggle.value, playToggleAnimation)
-
+watch(() => toggle.value, playToggleAnimation);
 </script>
 
 <template>
- <button class="image-toggle" @click="onToggle">
-   <span class="icon" ref="iconRef">
-     <img v-if="toggle" src="../assets/moon.svg" alt="moon" />
-     <img v-else src="../assets/sun.svg" alt="sun" />
-   </span>
- </button>
+  <button class="image-toggle" @click="onToggle">
+    <span class="icon" ref="iconRef">
+      <img v-if="toggle" src="../assets/moon.svg" alt="moon" />
+      <img v-else src="../assets/sun.svg" alt="sun" />
+    </span>
+  </button>
 </template>
 
 <style scoped>

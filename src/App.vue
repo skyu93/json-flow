@@ -1,68 +1,82 @@
 <script setup lang="ts">
-import ThemeSwitch from './components/ThemeSwitch.vue'
-import { computed, onMounted, watch } from 'vue'
-import { useStore } from './store/store.ts'
+import { computed, ref } from "vue";
+import SeparatorLayout from "./layout/SeparatorLayout.vue";
+import Logo from "./components/Logo.vue";
+import { useStore } from "./store/store.ts";
 
-const isDarkMode = computed({
-  get: () => useStore().isDarkMode,
-  set: flag => useStore().isDarkMode = flag,
-})
-onMounted(() => {
-  isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches;
-})
-
-watch(() => isDarkMode.value, () => {
-  document.documentElement.setAttribute('color-theme', isDarkMode.value ? 'dark' : 'light');
-})
+const dividerPercent = ref(20);
+const currentCaretPosition = computed(() => {
+  const { row, col } = useStore().currentCaretPosition;
+  return { row, col };
+});
 </script>
 
 <template>
-  <div class="wrapper">
-    <header>
-      <button class="logo">
-        <img src="./assets/logo.svg" alt="logo" />
-      </button>
-      <ThemeSwitch v-model="isDarkMode" />
-    </header>
-    <main></main>
-    <footer></footer>
-  </div>
+  <header>
+    <div class="header__wrapper">
+      <Logo class="margin-x" />
+      <div class="header__content">
+        <div class="text-black"></div>
+        <div class="text-black"></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <SeparatorLayout v-model="dividerPercent">
+      <template #left></template>
+      <template #right></template>
+    </SeparatorLayout>
+  </main>
+  <footer>
+    <div class="footer__wrapper">
+      <div class="flex" style="flex-grow: 1">
+        <div class="text-black"></div>
+      </div>
+      <div class="flex" style="flex-grow: 1; justify-content: end">
+        <div class="text-black">row: {{ currentCaretPosition.row }}</div>
+        <div class="text-black" style="margin-left: 1rem">col: {{ currentCaretPosition.col }}</div>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <style>
-header {
-  position: fixed;
-  top: 0;
-  width: 100vw;
-  height: 30px;
+.flex {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: var(--bg-bar);
 }
-main {
-  padding-top: 30px;
-  height: calc(100vh - 100px);
+.justify-between {
+  justify-content: space-between;
 }
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 100vw;
-  height: 26px;
+.text-black {
+  color: black;
+}
+.full-width {
+  width: 100%;
+}
+.margin-x {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+.header__wrapper {
+  height: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: var(--bg-bar);
 }
-.logo {
-  background: inherit;
-  background-image: url(./assets/logo.svg);
-  border:none;
-  box-shadow:none;
-  border-radius:0;
-  padding:0;
-  overflow: visible;
-  cursor:pointer
+.header__content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
+.footer__wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
 </style>
