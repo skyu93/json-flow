@@ -1,13 +1,46 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import SeparatorLayout from "./layout/SeparatorLayout.vue";
 import Logo from "./components/Logo.vue";
 import { useStore } from "./store/store.ts";
 
+import Editor from "./components/Editor.vue";
+import JsonFlow from "./components/JsonFlow.vue";
+
+const store = useStore();
 const dividerPercent = ref(20);
 const currentCaretPosition = computed(() => {
-  const { row, col } = useStore().currentCaretPosition;
+  const { row, col } = store.currentCaretPosition;
   return { row, col };
+});
+
+const editorText = computed({
+  get: () => store.json,
+  set: (value: string) => {
+    store.json = value;
+  },
+});
+const editorRect = reactive({
+  width: 0,
+  height: 0,
+});
+const resizeElement = ref(null);
+
+const handleResize = (entries: ResizeObserverEntry[]) => {
+  entries.forEach(entry => {
+    const { width, height } = entry.contentRect;
+    editorRect.width = width;
+    editorRect.height = height;
+  });
+};
+
+let observer = null;
+
+onMounted(() => {
+  observer = new ResizeObserver(handleResize);
+  if (resizeElement.value) {
+    observer.observe(resizeElement.value);
+  }
 });
 </script>
 
@@ -23,8 +56,14 @@ const currentCaretPosition = computed(() => {
   </header>
   <main>
     <SeparatorLayout v-model="dividerPercent">
-      <template #left></template>
-      <template #right></template>
+      <template #left>
+        <div ref="resizeElement" class="full-container">
+          <editor v-model="editorText" :width="editorRect.width" :height="editorRect.height" />
+        </div>
+      </template>
+      <template #right>
+        <JsonFlow />
+      </template>
     </SeparatorLayout>
   </main>
   <footer>
@@ -41,6 +80,11 @@ const currentCaretPosition = computed(() => {
 </template>
 
 <style>
+/* these are necessary styles for vue flow */
+@import "@vue-flow/core/dist/style.css";
+
+/* this contains the default theme, these are optional styles */
+@import "@vue-flow/core/dist/theme-default.css";
 .flex {
   display: flex;
   align-items: center;
@@ -51,9 +95,11 @@ const currentCaretPosition = computed(() => {
 .text-black {
   color: black;
 }
-.full-width {
+.full-container {
   width: 100%;
+  height: 100%;
 }
+
 .margin-x {
   margin-left: 0.5rem;
   margin-right: 0.5rem;

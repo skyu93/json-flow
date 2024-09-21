@@ -6,6 +6,7 @@ interface StoreState {
     row: number;
     col: number;
   };
+  json: string;
 }
 
 export const useStore = defineStore("JsonFlowStore", {
@@ -16,6 +17,17 @@ export const useStore = defineStore("JsonFlowStore", {
       row: 0,
       col: 0,
     },
+    json: "",
   }),
-  actions: {},
+  actions: {
+    getJsonParse() {
+      if (!this.json) return {};
+      try {
+        return JSON.parse(this.json);
+      } catch (e) {
+        console.error(e);
+        return {};
+      }
+    },
+  },
 });
