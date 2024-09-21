@@ -11,19 +11,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-:root[color-theme='light'] {
+:root[color-theme="light"] {
   color: #213547;
   background-color: #ffffff;
-  --bg-bar: #ECECECFF
+  --bg-bar: #ecececff;
 }
 
-:root[color-theme='dark'] {
+:root[color-theme="dark"] {
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-  --bg-bar: #ECECECFF
+  --bg-bar: #ecececff;
 }
-
-
 
 body {
   width: 100vw;
@@ -37,8 +35,8 @@ body {
 }
 
 /* 모든 요소와 가상 요소에 box-sizing을 설정 */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
-
-
