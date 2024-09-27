@@ -28,14 +28,6 @@ self.MonacoEnvironment = {
 
 const props = defineProps({
   modelValue: { type: String, default: "" },
-  width: {
-    type: [String, Number],
-    default: "100%",
-  },
-  height: {
-    type: [String, Number],
-    default: "100%",
-  },
   theme: { type: String as PropType<"dark" | "light">, default: "light" },
   language: { type: String, default: "json" },
 });
@@ -49,27 +41,15 @@ const editorText = computed({
     emits("update:modelValue", value);
   },
 });
-const style = computed<CSSProperties>(() => {
-  return {
-    width: isNaN(Number(props.width)) ? props.width : `${props.width}px`,
-    height: isNaN(Number(props.height)) ? props.height : `${props.height}px`,
-  };
-});
 const editorOptions = computed(() => ({
   language: props.language,
   theme: `vs-${props.theme}`,
-}));
-
-const resize = debounce(() => {
-  jsonEditor.value?.layout();
-}, 200);
-
-watch(
-  () => [props.height, props.width],
-  () => {
-    resize();
+  fontSize: 20,
+  minimap: {
+    enabled: false, // 미니맵(코드 요약 미리보기) 활성화 여부
   },
-);
+  automaticLayout: true, // 컨테이너의 크기에 맞춰 자동으로 레이아웃 조정
+}));
 
 watch(
   () => editorOptions.value,
@@ -78,7 +58,7 @@ watch(
   },
 );
 
-onMounted(() => {
+onMounted(async () => {
   if (!elementRef.value) return;
 
   jsonEditor.value = editor.create(elementRef.value, {
@@ -89,6 +69,10 @@ onMounted(() => {
   jsonEditor.value.onDidChangeModelContent(() => {
     editorText.value = jsonEditor.value?.getValue() || "";
   });
+
+  jsonEditor.value.onDidPaste(() => {
+    jsonEditor.value?.getAction("editor.action.formatDocument")?.run();
+  });
 });
 
 onUnmounted(() => {
@@ -97,7 +81,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="elementRef" :style="style" />
+  <div ref="elementRef" style="width: 100%; height: 100%" />
 </template>
 
 <style scoped></style>
