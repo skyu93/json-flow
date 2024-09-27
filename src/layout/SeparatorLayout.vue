@@ -56,10 +56,12 @@ onUnmounted(() => {
   width: 100%;
 }
 .separator-bar {
-  width: 0.5rem;
+  background-color: lightgray;
+  width: 3px;
 }
 .separator-bar:hover {
   cursor: col-resize;
   background-color: #364fc7;
+  width: 5px;
 }
 </style>
